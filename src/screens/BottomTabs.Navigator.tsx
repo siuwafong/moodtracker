@@ -6,6 +6,7 @@ import { Analytics } from "./Analytics.screen";
 
 const BottomTabs = createBottomTabNavigator();
 
+
 export const BottomTabsNavigator: React.FC = () => {
     return (
         <BottomTabs.Navigator>
