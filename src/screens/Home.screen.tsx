@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, ImageBackground } from 'react-native';
 import { MoodPicker } from '../components/MoodPicker';
-import { MoodItemRow } from '../components/MoodItemRow';
 import { useAppContext } from '../App.provider';
+
 
 export const Home: React.FC = () => {
   const styles = StyleSheet.create({
@@ -10,13 +10,20 @@ export const Home: React.FC = () => {
       flex: 1,
       justifyContent: 'center',
     },
+    square: {
+        width: 100,
+        height: 100,
+        backgroundColor: 'lightgreen'
+    }
   });
 
-  const { handleSelectMood } = useAppContext()
+  const { handleSelectMood } = useAppContext();
+
+  const imageSrc = require('../../assets/img/background.png')
 
   return (
-    <View style={styles.container}>
+    <ImageBackground source={imageSrc} style={styles.container}>
       <MoodPicker onSelect={handleSelectMood} />
-    </View>
+    </ImageBackground>
   );
 };
