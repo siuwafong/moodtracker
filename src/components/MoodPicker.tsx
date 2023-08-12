@@ -20,6 +20,7 @@ const imageSrc = require("../../assets/img/butterflies.png");
 
 export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
   const [selectedMood, setSelectedMood] = useState<MoodOptionType>();
+  const [previousSelectedMood, setPreviousSelectedMood] = useState<MoodOptionType>();
   const [hasSelected, setHasSelected] = useState<boolean>(false);
 
   const ReanimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -52,6 +53,8 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
     );
   }
 
+  console.log({ selectedMood, previousSelectedMood})
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>How are you right now?</Text>
@@ -59,7 +62,10 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
         {moodOptions.map((option) => (
           <View key={option.emoji}>
             <Pressable
-              onPress={() => setSelectedMood(option)}
+              onPress={() => {
+                setSelectedMood(option)
+                selectedMood ? setPreviousSelectedMood(selectedMood) : null
+              }}
               style={[
                 styles.moodItem,
                 option.emoji === selectedMood?.emoji
