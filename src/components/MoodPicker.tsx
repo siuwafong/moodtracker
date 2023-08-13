@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { MoodOptionType } from '../types';
 import { theme } from '../theme';
@@ -23,6 +23,15 @@ interface MoodPickerProps {
 const imageSrc = require('../../assets/img/butterflies.png');
 
 export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
+  const [selectedMood, setSelectedMood] = useState<MoodOptionType>();
+  const [previousSelectedMood, setPreviousSelectedMood] =
+    useState<MoodOptionType>();
+  const [hasSelected, setHasSelected] = useState<boolean>(false);
+
+  const ReanimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+  const selectedMoodScale = useSharedValue(0);
+  const altSelectedMoodScale = useSharedValue(1);
 
   const styles = StyleSheet.create({
     moodText: {
@@ -44,6 +53,8 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
       position: 'absolute',
       backgroundColor: theme.colorPurple,
       borderColor: theme.colorWhite,
+      // width: selectedMoodScale.value,
+      // height: selectedMoodScale.value,
       width: 60,
       height: 60,
       borderWidth: 2,
@@ -91,23 +102,41 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
     },
   });
 
-  
-  const [selectedMood, setSelectedMood] = useState<MoodOptionType>();
-  const [previousSelectedMood, setPreviousSelectedMood] =
-    useState<MoodOptionType>();
-  const [hasSelected, setHasSelected] = useState<boolean>(false);
-
-  const ReanimatedPressable = Animated.createAnimatedComponent(Pressable);
-
-  const selectedMoodSize = useSharedValue(0);
-
   const buttonStyle = useAnimatedStyle(
-    () => ({
-      opacity: selectedMood !== undefined ? withTiming(1) : withTiming(0.5),
-      transform: [{ scale: selectedMood ? withTiming(1) : 0.8 }],
-    }),
+    () =>
+      selectedMood?.emoji !== previousSelectedMood?.emoji
+        ? {
+            opacity:
+              selectedMood !== undefined ? withTiming(1) : withTiming(0.5),
+            transform: [{ scale: selectedMood ? withTiming(1) : 0.8 }],
+          }
+        : {},
     [selectedMood],
   );
+
+  const backgroundStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: selectedMood
+            ? withTiming(selectedMoodScale.value, { duration: 200 })
+            : 0,
+        },
+      ],
+    };
+  }, [selectedMood]);
+
+  const altBackgroundStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: selectedMood
+            ? withTiming(altSelectedMoodScale.value, { duration: 200 })
+            : 0,
+        },
+      ],
+    };
+  }, [selectedMood]);
 
   const handleSelect = React.useCallback(() => {
     if (selectedMood) {
@@ -128,11 +157,19 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
     );
   }
 
-  console.log({ selectedMood, previousSelectedMood });
-
-  const startIncreaseAnimation = () => {
-    selectedMoodSize.value = withTiming(60, { duration: 200 });
+  const handleSelectMood = (option: MoodOptionType) => {
+    setSelectedMood(option);
   };
+
+  useEffect(() => {
+    if (selectedMoodScale.value === 1 && selectedMood) {
+      selectedMoodScale.value = 0;
+      altSelectedMoodScale.value = 1;
+    } else if (selectedMoodScale.value === 0 && selectedMood) {
+      selectedMoodScale.value = 1;
+      altSelectedMoodScale.value = 0;
+    }
+  }, [selectedMood]);
 
   return (
     <View style={styles.container}>
@@ -142,16 +179,30 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
           <View key={option.emoji}>
             <Pressable
               onPress={() => {
-                setSelectedMood(option);
+                selectedMood?.emoji !== option.emoji
+                  ? handleSelectMood(option)
+                  : null;
                 selectedMood ? setPreviousSelectedMood(selectedMood) : null;
               }}
               style={[styles.moodItem]}>
-              <View
-                style={
+              <Animated.View
+                style={[
+                  (option.emoji === selectedMood?.emoji &&
+                    selectedMoodScale.value === 0) ||
+                  (option.emoji === previousSelectedMood?.emoji &&
+                    selectedMoodScale.value === 1)
+                    ? backgroundStyle
+                    : null,
+                  (option.emoji === selectedMood?.emoji &&
+                    altSelectedMoodScale.value === 0) ||
+                  (option.emoji === previousSelectedMood?.emoji &&
+                    altSelectedMoodScale.value === 1)
+                    ? altBackgroundStyle
+                    : null,
                   option.emoji === selectedMood?.emoji
                     ? styles.selectedMoodItem
-                    : undefined
-                }
+                    : undefined,
+                ]}
               />
               <Text style={styles.moodText}>{option.emoji}</Text>
             </Pressable>
@@ -169,4 +220,3 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
     </View>
   );
 };
-
