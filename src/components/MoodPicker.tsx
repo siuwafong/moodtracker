@@ -53,8 +53,6 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
       position: 'absolute',
       backgroundColor: theme.colorPurple,
       borderColor: theme.colorWhite,
-      // width: selectedMoodScale.value,
-      // height: selectedMoodScale.value,
       width: 60,
       height: 60,
       borderWidth: 2,
@@ -102,17 +100,12 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
     },
   });
 
-  const buttonStyle = useAnimatedStyle(
-    () =>
-      selectedMood?.emoji !== previousSelectedMood?.emoji
-        ? {
-            opacity:
-              selectedMood !== undefined ? withTiming(1) : withTiming(0.5),
-            transform: [{ scale: selectedMood ? withTiming(1) : 0.8 }],
-          }
-        : {},
-    [selectedMood],
-  );
+  const buttonStyle = useAnimatedStyle(() => {
+    return {
+      opacity: selectedMood !== undefined ? withTiming(1) : withTiming(0.5),
+      transform: [{ scale: selectedMood ? withTiming(1) : 0.8 }],
+    };
+  }, [selectedMood]);
 
   const backgroundStyle = useAnimatedStyle(() => {
     return {
