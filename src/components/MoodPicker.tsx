@@ -7,13 +7,17 @@ import Animated, {
   withTiming,
   useSharedValue,
 } from 'react-native-reanimated';
+import { AppText } from './AppText';
 
-const moodOptions: MoodOptionType[] = [
+export const moodOptions: MoodOptionType[] = [
   { emoji: '🧑‍💻', description: 'studious' },
   { emoji: '🤔', description: 'pensive' },
   { emoji: '😊', description: 'happy' },
   { emoji: '🥳', description: 'celebratory' },
   { emoji: '😤', description: 'frustrated' },
+  { emoji: '😪', description: 'sleepy'},
+  { emoji: '😰', description: 'anxious'},
+  { emoji: '🥰', description: 'in love'}
 ];
 
 interface MoodPickerProps {
@@ -63,7 +67,6 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
       fontWeight: 'bold',
       fontSize: 10,
       textAlign: 'center',
-      fontFamily: theme.fontFamilyBold,
     },
     container: {
       height: 250,
@@ -80,7 +83,6 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
       letterSpacing: 1,
       textAlign: 'center',
       color: theme.colorWhite,
-      fontFamily: theme.fontFamilyBold,
     },
     button: {
       backgroundColor: theme.colorPurple,
@@ -93,7 +95,6 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
       color: theme.colorWhite,
       textAlign: 'center',
       fontWeight: 'bold',
-      fontFamily: theme.fontFamilyBold,
     },
     image: {
       alignSelf: 'center',
@@ -139,21 +140,6 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
     }
   }, [onSelect, selectedMood]);
 
-  if (hasSelected) {
-    return (
-      <View style={styles.container}>
-        <Image source={imageSrc} style={styles.image} />
-        <Pressable style={styles.button} onPress={() => setHasSelected(false)}>
-          <Text style={styles.buttonText}>Choose Another</Text>
-        </Pressable>
-      </View>
-    );
-  }
-
-  const handleSelectMood = (option: MoodOptionType) => {
-    setSelectedMood(option);
-  };
-
   useEffect(() => {
     if (selectedMoodScale.value === 1 && selectedMood) {
       selectedMoodScale.value = 0;
@@ -164,9 +150,24 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
     }
   }, [selectedMood]);
 
+  if (hasSelected) {
+    return (
+      <View style={styles.container}>
+        <Image source={imageSrc} style={styles.image} />
+        <Pressable style={styles.button} onPress={() => setHasSelected(false)}>
+          <AppText style={styles.buttonText} fontWeight='bold'>Choose Another</AppText>
+        </Pressable>
+      </View>
+    );
+  }
+
+  const handleSelectMood = (option: MoodOptionType) => {
+    setSelectedMood(option);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>How are you right now?</Text>
+      <AppText style={styles.heading} fontWeight="bold">How are you right now?</AppText>
       <View style={styles.moodList}>
         {moodOptions.map(option => (
           <View key={option.emoji}>
@@ -175,7 +176,7 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
                 selectedMood?.emoji !== option.emoji
                   ? handleSelectMood(option)
                   : null;
-                selectedMood ? setPreviousSelectedMood(selectedMood) : null;
+                selectedMood && selectedMood?.emoji !== option.emoji ? setPreviousSelectedMood(selectedMood) : null;
               }}
               style={[styles.moodItem]}>
               <Animated.View
@@ -199,16 +200,16 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
               />
               <Text style={styles.moodText}>{option.emoji}</Text>
             </Pressable>
-            <Text style={styles.descriptionText}>
+            <AppText style={styles.descriptionText} fontWeight='bold'>
               {selectedMood?.emoji === option.emoji ? option.description : ' '}
-            </Text>
+            </AppText>
           </View>
         ))}
       </View>
       <ReanimatedPressable
         style={[styles.button, buttonStyle]}
         onPress={handleSelect}>
-        <Text style={styles.buttonText}>Choose</Text>
+        <AppText style={styles.buttonText} fontWeight='bold'>Choose</AppText>
       </ReanimatedPressable>
     </View>
   );

@@ -1,5 +1,11 @@
-import React, { useContext, useState, useCallback, useEffect } from 'react';
-import { MoodOptionType, MoodOptionWithTimestamp } from './types';
+import React, {
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  createContext
+} from 'react';
+import { MoodOptionType, MoodOptionWithTimestamp } from '../types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AppContextType = {
@@ -17,7 +23,9 @@ const dataKey = 'my-app-data';
 const setAppData = async (appData: AppData): Promise<void> => {
   try {
     const result = await AsyncStorage.setItem(dataKey, JSON.stringify(appData));
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const getAppData = async (): Promise<AppData | null> => {
@@ -26,7 +34,9 @@ const getAppData = async (): Promise<AppData | null> => {
     if (result) {
       return JSON.parse(result);
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
 
   return null;
 };
@@ -34,14 +44,14 @@ const getAppData = async (): Promise<AppData | null> => {
 const defaultValue = {
   moodList: [],
   handleSelectMood: () => {},
-  handleDeleteMood: () => {}
+  handleDeleteMood: () => {},
 };
 
 interface AppProviderProps {
   children: React.ReactNode;
 }
 
-const AppContext = React.createContext<AppContextType>(defaultValue);
+const AppContext = createContext<AppContextType>(defaultValue);
 
 export const AppProvider: React.FC<AppProviderProps> = props => {
   const { children } = props;
@@ -77,7 +87,12 @@ export const AppProvider: React.FC<AppProviderProps> = props => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ moodList, handleSelectMood, handleDeleteMood }}>
+    <AppContext.Provider
+      value={{
+        moodList,
+        handleSelectMood,
+        handleDeleteMood,
+      }}>
       {children}
     </AppContext.Provider>
   );

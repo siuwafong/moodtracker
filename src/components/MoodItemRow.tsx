@@ -9,7 +9,7 @@ import {
 import format from 'date-fns/format';
 import { MoodOptionWithTimestamp } from '../types';
 import { theme } from '../theme';
-import { useAppContext } from '../App.provider';
+import { useAppContext } from '../context/App.provider';
 import {
   PanGestureHandler,
   GestureHandlerRootView,
@@ -21,6 +21,7 @@ import Reanimated, {
   withTiming,
   runOnJS
 } from 'react-native-reanimated';
+import { AppText } from './AppText';
 
 type MoodItemRowProps = {
   item: MoodOptionWithTimestamp;
@@ -78,14 +79,14 @@ export const MoodItemRow: React.FC<MoodItemRowProps> = ({ item }) => {
         onGestureEvent={onGestureEvent}>
         <Reanimated.View style={[styles.moodItem, cardStyle]}>
           <View style={styles.iconAndDescription}>
-            <Text style={styles.moodValue}>{item.mood.emoji}</Text>
-            <Text style={styles.moodDescription}>{item.mood.description}</Text>
+            <AppText style={styles.moodValue}>{item.mood.emoji}</AppText>
+            <AppText style={styles.moodDescription} fontWeight='bold'>{item.mood.description}</AppText>
           </View>
-          <Text style={styles.moodDate}>
+          <AppText style={styles.moodDate}>
             {format(new Date(item.timestamp), "do MMM, yy 'at' h:mmaaa")}
-          </Text>
+          </AppText>
           <Pressable hitSlop={16} onPress={() => handleDelete()}>
-            <Text style={styles.deleteText}>Delete</Text>
+            <AppText style={styles.deleteText} fontWeight='light'>Delete</AppText>
           </Pressable>
         </Reanimated.View>
       </PanGestureHandler>
@@ -102,7 +103,6 @@ const styles = StyleSheet.create({
   moodDate: {
     textAlign: 'center',
     color: theme.colorLavender,
-    fontFamily: theme.fontFamilyRegular,
   },
   moodItem: {
     backgroundColor: 'white',
@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
   moodDescription: {
     fontSize: 18,
     color: theme.colorPurple,
-    fontFamily: theme.fontFamilyBold,
   },
   iconAndDescription: {
     flexDirection: 'row',
@@ -123,6 +122,5 @@ const styles = StyleSheet.create({
   },
   deleteText: {
     color: theme.colorBlue,
-    fontFamily: theme.fontFamilyLight,
   },
 });

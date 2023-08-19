@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, ImageBackground } from 'react-native';
 import { MoodPicker } from '../components/MoodPicker';
-import { useAppContext } from '../App.provider';
+import { useAppContext } from '../context/App.provider';
 
 
 export const Home: React.FC = () => {

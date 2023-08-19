@@ -1,8 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { BottomTabsNavigator } from './screens/BottomTabs.Navigator';
-import { AppProvider } from './App.provider';
+import { AppProvider } from './context/App.provider';
 import { Platform, UIManager } from 'react-native';
+import { SettingsProvider } from './context/Settings.provider';
 import SplashScreen from 'react-native-splash-screen';
 
 if (Platform.OS === 'android') {
@@ -18,9 +19,11 @@ export const App: React.FC = () => {
 
   return (
     <AppProvider>
-      <NavigationContainer>
-        <BottomTabsNavigator />
-      </NavigationContainer>
+      <SettingsProvider>
+        <NavigationContainer>
+          <BottomTabsNavigator />
+        </NavigationContainer>
+      </SettingsProvider>
     </AppProvider>
   );
 };
