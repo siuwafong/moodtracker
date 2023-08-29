@@ -14,10 +14,10 @@ export const moodOptions: MoodOptionType[] = [
   { emoji: '🤔', description: 'pensive' },
   { emoji: '😊', description: 'happy' },
   { emoji: '🥳', description: 'celebratory' },
+  { emoji: '🥰', description: 'loved'},
   { emoji: '😤', description: 'frustrated' },
   { emoji: '😪', description: 'sleepy'},
   { emoji: '😰', description: 'anxious'},
-  { emoji: '🥰', description: 'in love'}
 ];
 
 interface MoodPickerProps {
@@ -99,6 +99,9 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
     image: {
       alignSelf: 'center',
     },
+    moodListDefault: {
+      width: 300,
+    }
   });
 
   const buttonStyle = useAnimatedStyle(() => {
@@ -181,6 +184,7 @@ export const MoodPicker: React.FC<MoodPickerProps> = ({ onSelect }) => {
               style={[styles.moodItem]}>
               <Animated.View
                 style={[
+                  styles.moodListDefault,
                   (option.emoji === selectedMood?.emoji &&
                     selectedMoodScale.value === 0) ||
                   (option.emoji === previousSelectedMood?.emoji &&
